@@ -3,11 +3,11 @@ import { ImageLinkForm, Navigation, Rank, Footer } from "../components/index";
 import { useState, useEffect } from "react";
 
 //Api auth
-const PAT = "e05d7744cb734125bfc9170e55a6b4a9";
-const USER_ID = "o98k58qnh6pn";
-const APP_ID = "visionapp";
-const MODEL_ID = "face-detection";
-const MODEL_VERSION_ID = "6dc7e46bc9124c5c8824be4822abe105";
+const PAT = process.env.REACT_APP_PAT;
+const USER_ID = process.env.REACT_APP_USER_ID;
+const APP_ID = process.env.REACT_APP_APP_ID;
+const MODEL_ID = process.env.REACT_APP_MODEL_ID;
+const MODEL_VERSION_ID = process.env.REACT_APP_MODEL_VERSION_ID;
 
 const Home = ({ User, setUser }) => {
   let [InputImage, setInputImage] = useState("");
