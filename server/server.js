@@ -74,13 +74,13 @@ app.get("/", (req, res) => {
 
 app.post("/login", (req, res) => {
   if (req.body.googleToken !== null) {
-    GoogleUser(req.body.googleToken, res);
+    GoogleUser(req.body.googleToken, res); //check if user uses google to login
   } else {
     db.select("email", "hash")
       .from("login")
-      .where("email", "=", req.body.email)
+      .where("email", "=", req.body.email) //check if user exists
       .then((data) => {
-        const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
+        const isValid = bcrypt.compareSync(req.body.password, data[0].hash); //compare hashed password
         if (isValid) {
           return db
             .select("*")
@@ -100,33 +100,41 @@ app.post("/login", (req, res) => {
 
 app.post("/signup", (req, res) => {
   if (req.body.googleToken !== null) {
-    GoogleUser(req.body.googleToken, res);
+    GoogleUser(req.body.googleToken, res); //check if user uses google to sign up
   } else {
-    const hash = bcrypt.hashSync(req.body.password, saltRounds);
-    db.transaction((trx) => {
-      trx
-        .insert({
-          hash: hash,
-          email: req.body.email,
-        })
-        .into("login")
-        .returning("email")
-        .then((loginEmail) => {
-          db("users")
-            .returning("*")
-            .insert({
-              email: loginEmail[0].email,
-              name: req.body.name,
-              joined: new Date(),
-            })
-            .then((user) => {
-              res.json(user[0]);
-            })
-            .catch((err) => res.json("error"));
-        })
-        .then(trx.commit)
-        .catch((err) => res.json("error"));
-    });
+    db.select("*")
+      .from("login")
+      .where("email", "=", req.body.email)
+      .then((data) => {
+        if (data.length) {
+          res.json("User already exists"); //check if user already exists
+        } else {
+          const hash = bcrypt.hashSync(req.body.password, saltRounds); //hash password
+          db.transaction((trx) => {
+            trx
+              .insert({
+                hash: hash, //insert hashed password, email into login table
+                email: req.body.email,
+              })
+              .into("login")
+              .returning("email")
+              .then((loginEmail) => {
+                return trx("users")
+                  .returning("*")
+                  .insert({
+                    email: loginEmail[0],
+                    name: req.body.name, //insert login table email, name, joined date into users table
+                    joined: new Date(),
+                  })
+                  .then((user) => {
+                    res.json(user[0]);
+                  });
+              })
+              .then(trx.commit)
+              .catch(trx.rollback);
+          });
+        }
+      });
   }
 });
 

@@ -53,7 +53,7 @@ const Auth = ({ LoadUser }) => {
       })
         .then((response) => response.json())
         .then((user) => {
-          if (user) {
+          if (user !== "User already exists" && user !== "error") {
             LoadUser(user);
             navigate("/");
           } else {
