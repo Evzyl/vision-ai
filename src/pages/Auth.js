@@ -40,7 +40,10 @@ const Auth = ({ LoadUser }) => {
   }
 
   function onSubmit(googleToken) {
-    if (page === "signup" && SignUpName && SignUpEmail && SignUpPassword) {
+    if (
+      (page === "signup" && googleToken) ||
+      (page === "signup" && SignUpName && SignUpEmail && SignUpPassword)
+    ) {
       fetch("http://localhost:3001/signup", {
         method: "post",
         headers: { "Content-Type": "application/json" },
@@ -57,10 +60,13 @@ const Auth = ({ LoadUser }) => {
             LoadUser(user);
             navigate("/");
           } else {
-            navigate("/auth/signup");
+            window.location.reload();
           }
         });
-    } else if (page === "login" && LoginEmail && LoginPassword) {
+    } else if (
+      (page === "login" && googleToken) ||
+      (page === "login" && LoginEmail && LoginPassword)
+    ) {
       fetch("http://localhost:3001/login", {
         method: "post",
         headers: { "Content-Type": "application/json" },
@@ -72,15 +78,17 @@ const Auth = ({ LoadUser }) => {
       })
         .then((response) => response.json())
         .then((user) => {
-          if (user === "error" || user === "invalid password") {
-            window.location.reload(false);
-          } else {
+          if (user !== "error" || user !== "invalid password") {
             LoadUser(user);
             navigate("/");
+          } else {
+            window.location.reload();
           }
         });
     } else {
-      window.location.reload(false);
+      console.log(
+        `Error: ${page === "signup" ? "Sign up" : "Log in"} form is not valid`
+      );
     }
   }
   const login = useGoogleLogin({
