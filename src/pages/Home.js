@@ -19,7 +19,7 @@ const Home = ({ User, setUser }) => {
 
   useEffect(() => {
     if (User.id !== "" && Image !== "") {
-      fetch("http://localhost:3001/image", {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/image`, {
         method: "put",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

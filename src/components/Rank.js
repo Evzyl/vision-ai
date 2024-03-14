@@ -1,10 +1,11 @@
 import React from "react";
 import { useEffect, useState } from "react";
+
 const Rank = ({ User }) => {
   let [RankUsers, setRankUsers] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/rank")
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/rank`)
       .then((response) => response.json())
       .then((users) => {
         console.log(users);
@@ -14,6 +15,7 @@ const Rank = ({ User }) => {
         console.error("Error fetching top 5 users:", error);
       });
   }, [User]);
+  const userRank = RankUsers.findIndex((user) => user.id === User.id) + 1;
 
   if (User.id === "") {
     return null;
@@ -24,7 +26,7 @@ const Rank = ({ User }) => {
       <h2 className=" text-lg text-SecondaryWhite text-center mb-5">
         <i className="text-white text-xl not-italic"> {User.name} </i>
         your current rank is{" "}
-        <i className="text-white text-xl not-italic"> #21</i>, with
+        <i className="text-white text-xl not-italic"> #{userRank}</i>, with
         <i className="text-white text-xl not-italic"> {User.entries} </i> faces
         detected
       </h2>

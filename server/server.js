@@ -1,3 +1,4 @@
+require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
@@ -7,6 +8,7 @@ const saltRounds = 10;
 const knex = require("knex");
 const myPlaintextPassword = "s0//P4$$w0rD";
 const someOtherPlaintextPassword = "not_bacon";
+const PORT = process.env.PORT;
 const app = express();
 
 function GoogleUser(token, res) {
@@ -56,11 +58,14 @@ function GoogleUser(token, res) {
 const db = knex({
   client: "pg",
   connection: {
-    host: "127.0.0.1",
-    port: 5432,
-    user: "postgres",
-    password: "112233",
-    database: "visionai-db",
+    host: process.env.POSTGRES_HOST,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    database: process.env.POSTGRES_DATABASE,
+    ssl: {
+      rejectUnauthorized: false,
+      require: true,
+    },
   },
   pool: { min: 0, max: 20 },
 });
@@ -159,7 +164,6 @@ app.get("/rank", (req, res) => {
   db.select("*")
     .from("users")
     .orderBy("entries", "desc")
-    .limit(5)
     .then((users) => {
       res.json(users);
     })
@@ -180,8 +184,8 @@ app.put("/image", (req, res) => {
     .catch((err) => res.json("error"));
 });
 
-app.listen(3001, () => {
-  console.log("app is running on 3001");
+app.listen(PORT, () => {
+  console.log(`app is running on port ${PORT}`);
 });
 
 /*
