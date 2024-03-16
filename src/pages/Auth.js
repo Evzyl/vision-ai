@@ -44,7 +44,7 @@ const Auth = ({ LoadUser }) => {
       (page === "signup" && googleToken) ||
       (page === "signup" && SignUpName && SignUpEmail && SignUpPassword)
     ) {
-      fetch(`${process.env.REACT_APP_API_BASE_URL}/signup`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/signup`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -67,7 +67,7 @@ const Auth = ({ LoadUser }) => {
       (page === "login" && googleToken) ||
       (page === "login" && LoginEmail && LoginPassword)
     ) {
-      fetch(`${process.env.REACT_APP_API_BASE_URL}/login`, {
+      fetch(`${process.env.REACT_APP_API_BASE_URL}/api/login`, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

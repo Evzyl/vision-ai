@@ -5,7 +5,7 @@ const Rank = ({ User }) => {
   let [RankUsers, setRankUsers] = useState([]);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_API_BASE_URL}/rank`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/api/rank`)
       .then((response) => response.json())
       .then((users) => {
         console.log(users);
